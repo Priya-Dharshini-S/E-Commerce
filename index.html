@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaGo - Best destination for ur favourite products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="header">
+        <div class="container">
+            <div class="brand">
+                <a href="#" class="logo animate__animated animate__pulse animate__infinite">
+                    <i class="fas fa-gift"></i> InstaGo
+                </a>
+            </div>
+            <nav class="navbar">
+                <a href="#" class="nav-link active" data-section="home"><i class="fas fa-home"></i> Home</a>
+                <a href="#" class="nav-link" data-section="products"><i class="fas fa-store"></i> Shop</a>
+                <a href="#" class="nav-link" data-section="about"><i class="fas fa-info-circle"></i> About</a>
+                <a href="#" class="nav-link" data-section="contact"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="#" class="nav-link" data-section="login"><i class="fas fa-sign-in-alt"></i> Log In</a>
+                <a href="#" class="nav-link" data-section="register"><i class="fas fa-user-plus"></i> Register</a>
+                <a href="#" class="nav-link cart-badge" data-section="cart"><i class="fas fa-shopping-cart"></i> Cart <span class="badge">0</span></a>
+                <a href="#" class="nav-link" data-section="order-history"><i class="fas fa-history"></i> Order History</a>
+                <a href="#" class="nav-link" id="logoutBtn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar for Filters -->
+    
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3>Filters</h3>
+    <button class="close-sidebar"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="filter-group">
+    <label for="categoryFilter">Category:</label>
+    <select id="categoryFilter" class="form-control">
+      <option value="all">All Categories</option>
+      <option value="electronics">Electronics</option>
+      <option value="fashion">Fashion</option>
+      <option value="furniture">Furniture</option>
+      <option value="cosmetics">Cosmetics</option>
+      <option value="foodAndHealth">Food & Health</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="sortBy">Sort By:</label>
+    <select id="sortBy" class="form-control">
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="name-asc">Name: A to Z</option>
+      <option value="name-desc">Name: Z to A</option>
+    </select>
+  </div>
+  <!-- Apply Filters button, shown only for #products section -->
+  <div class="filter-group" id="applyFiltersGroup" style="display: none;">
+    <button id="applyFiltersBtn" class="btn btn-primary btn-block">Apply Filters</button>
+  </div>
+</div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Promo Banner -->
+            <div class="promo-banner animate__animated animate__fadeInDown">
+                <p>🎉 Celebrate with Joy! Explore products at the lowest prices <i class="fas fa-gift"></i></p>
+            </div>
+
+            <!-- Home Section -->
+            <section id="home" class="section active">
+                <div class="hero animate__animated animate__zoomIn">
+                    <div class="hero-content">
+                        <h1 class="hero-title">GET READY TO ADD PRODUCTS TO YOUR BUCKET!</h1>
+                        <p class="hero-subtitle"></p>
+                        <div class="hero-cta">
+                            <a href="#" class="btn btn-hero btn-primary" onclick="showSection('products')
+                            "data-section="products">Shop Now</a>
+                            
+                            <a href="#" class="btn btn-hero btn-outline">Discover More</a>
+                        </div>
+                    </div>
+                </div>
+                <h2 class="section-title animate__animated animate__fadeInUp">Featured Products</h2>
+                <div class="product-grid" id="featuredProducts"></div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="section">
+                <h2 class="section-title">Our Products</h2>
+                <div class="products-container">
+                    <button class="filter-toggle"><i class="fas fa-filter"></i> Filters</button>
+                    <div class="product-grid" id="productsList"></div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="section">
+                <h2 class="section-title">About Us</h2>
+                <p>Welcome to InstaGo – your one-stop destination for fast, reliable, and hassle-free online shopping!
+
+                    At InstaGo, we believe shopping should be effortless and enjoyable. Our platform offers a wide range of high-quality products across various categories, including electronics, fashion, home essentials, beauty, and more. Whether you're looking for the latest tech gadgets, trendy apparel, or everyday necessities, we’ve got you covered.</p>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="section">
+                <h2 class="section-title">Contact Us</h2>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt"></i> 123 GiftZone Street, London, USA</p>
+                    <p><i class="fas fa-envelope"></i> info@instago.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </section>
+
+            <!-- Login Section -->
+            <section id="login" class="section">
+                <h2 class="section-title">Login</h2>
+                <div class="form-container">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="guestBtn" class="btn btn-outline btn-block">Continue as Guest</button>
+                        </div>
+                        <div id="loginMessage" class="message"></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Register Section -->
+            <section id="register" class="section">
+                <h2 class="section-title">Register</h2>
+                <div class="form-container">
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerName" class="form-label">Full Name</label>
+                            <input type="text" id="registerName" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerDOB" class="form-label">Date of Birth</label>
+                            <input type="date" id="registerDOB" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" id="registerPassword" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        </div>
+                        <div id="registerMessage" class="message"></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Cart Section -->
+            <section id="cart" class="section">
+                <h2 class="section-title">Your Cart</h2>
+                <div id="cartList" class="cart-container"></div>
+                <div class="cart-total">
+                    <h3>Cart Total: $<span id="cartTotal">0.00</span></h3>
+                    <button id="placeOrderBtn" class="btn btn-primary">Place Order</button>
+                </div>
+            </section>
+
+            <!-- Order History Section -->
+            <section id="order-history" class="section">
+                <h2 class="section-title">Order History</h2>
+                <div id="orderHistoryList" class="order-history-container"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Complete Your Order</h2>
+            <p>Total Amount: $<span id="paymentAmount">0.00</span></p>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" class="form-control">
+                        <option value="credit_card">Credit Card</option>
+                        <option value="debit_card">Debit Card</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+                </div>
+                <div class="payment-details" id="cardDetails">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="expiryDate">Expiry Date</label>
+                            <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" class="form-control" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="processPaymentBtn" class="btn btn-primary btn-block">Pay Now</button>
+                    <button type="button" id="cancelPaymentBtn" class="btn btn-outline btn-block">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- Credit Points Modal -->
+<div id="creditPointsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCreditPointsModal()">×</span>
+        <h2>Use Credit Points</h2>
+        <p>You have <span id="availableCreditPoints">0</span> credit points. Each point is worth $1.</p>
+        <p>Would you like to use your credit points to reduce your total of $<span id="creditPointsTotalAmount">0.00</span>?</p>
+        <div class="form-group">
+            <button type="button" id="useCreditPointsBtn" class="btn btn-primary btn-block">Yes, Use Points</button>
+            <button type="button" id="skipCreditPointsBtn" class="btn btn-outline btn-block">No, Skip</button>
+        </div>
+    </div>
+</div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="#" class="footer-logo"><i class="fas fa-gift"></i> InstaGo</a>
+                    <p>Premium products for every occasion. Discover InstaGo's diverse collection of stylish, high-quality, and innovative items designed to enhance your shopping experience.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-container">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-section="home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="#" data-section="about"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="#" data-section="products"><i class="fas fa-chevron-right"></i> Products</a></li>
+                        <li><a href="#" data-section="contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        <li><a href="#" data-section="login"><i class="fas fa-chevron-right"></i> Log In</a></li>
+                        <li><a href="#" data-section="register"><i class="fas fa-chevron-right"></i> Register</a></li>
+                        <li><a href="#" data-section="cart"><i class="fas fa-chevron-right"></i> Cart</a></li>
+                        <li><a href="#" data-section="order-history"><i class="fas fa-chevron-right"></i> Order History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4 class="footer-title">Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 GiftZone Street, London, USA</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> info@instago.com</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> +1 (555) 123-4567</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 InstaGo. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+<script>
+  function updateFilterButtonVisibility() {
+    const productsSection = document.getElementById('products');
+    const applyFiltersGroup = document.getElementById('applyFiltersGroup');
+    if (productsSection && applyFiltersGroup) {
+      applyFiltersGroup.style.display = productsSection.classList.contains('active') ? 'block' : 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateFilterButtonVisibility);
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sectionId = link.getAttribute('data-section');
+      showSection(sectionId);
+      updateFilterButtonVisibility();
+    });
+  });
+</script>
+</html>  
