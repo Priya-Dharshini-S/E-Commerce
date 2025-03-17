@@ -2,703 +2,281 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - HandTime</title>
-    <!-- Corrected Firebase SDK URLs -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | HEALTHIFY</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://kit.fontawesome.com/abcdef12345.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="#" class="logo">
-                <i class="fas fa-watch"></i> Admin Panel
-            </a>
-            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-link active" onclick="showCategory('electronics')">Electronics</a>
-            <a href="#" class="nav-link" onclick="showCategory('fashion')">Fashion</a>
-            <a href="#" class="nav-link" onclick="showCategory('furniture')">Furniture</a>
-            <a href="#" class="nav-link" onclick="showCategory('cosmetics')">Cosmetics</a>
-            <a href="#" class="nav-link" onclick="showCategory('foodAndHealth')">Food and Health</a>
-            <a href="#" class="nav-link" onclick="logout()">Logout</a>
-        </nav>
+    <!-- Announcement Bar -->
+    <div class="announcement-bar festive-accent">
+        <p>LISTEN TO THE GREATEST DEALS! FREE SHIPPING ON ORDERS OVER $50</p>
     </div>
 
-    <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle sidebar-open" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-    <!-- Main Content -->
-    <main class="main">
+    <!-- Header Navigation -->
+    <header class="main-header festive-header">
         <div class="container">
-            <!-- Admin Login Section -->
-            <div id="loginSection" class="section active animate__animated animate__fadeIn">
-                <h2 class="section-title">Admin Login</h2>
-                <div class="form-container">
-                    <form id="adminLoginForm">
+            <div class="logo">
+                <a href="#" class="festive-logo">HEALTHIFY</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">SHOP PAGE</a></li>
+                    <li><a href="#" class="active">ADMIN</a></li>
+                    <li><a href="#" onclick="logout()">LOGOUT</a></li>
+                </ul>
+            </nav>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="festive-button" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Dashboard -->
+    <main class="admin-dashboard festive-background">
+        <div class="container">
+            <h1 class="page-title festive-title">ADMIN DASHBOARD</h1>
+            <div class="dashboard-subtitle">
+                <p>Enjoy shopping your favourite items at greatest deals and quick delivery</p>
+            </div>
+
+            <!-- Add Product Form -->
+            <section class="admin-section festive-section">
+                <div class="loader"></div>
+                <h2 class="section-title festive-section-title">Add New Product</h2>
+                <div class="form-card festive-card">
+                    <form id="addProductForm" class="form">
                         <div class="form-group">
-                            <label for="adminEmail" class="form-label">Admin Email</label>
-                            <input type="email" id="adminEmail" value="priya623@gmail.com" placeholder="Admin Email" required>
+                            <input type="text" id="productName" placeholder="Product Name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <input type="number" id="productPrice" placeholder="Price" required>
+                            </div>
+                            <div class="form-group half">
+                                <input type="number" id="productDiscountPrice" placeholder="Discount Price (optional)">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="adminPassword" class="form-label">Password</label>
-                            <input type="password" id="adminPassword" value="priya@123" placeholder="Password" required>
+                            <input type="text" id="productBrand" placeholder="Brand" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <select id="productCategory">
+                                    <option value="fruitss">Fruits</option>
+                                    <option value="veg">Vegetables</option>
+                                    <option value="dairy">Dairy</option>
+                                    <option value="herbayur">HerbalAndAyurvedic</option>
+                                    <option value="oils">Essential Oils</option>
+                                </select>
+                            </ concepts>
+                            <div class="form-group half">
+                                <select id="productCurrency">
+                                    <option value="USD">USD ($)</option>
+                                    <option value="INR">INR (₹)</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                            <input type="number" id="productAvailability" placeholder="Availability" required>
                         </div>
-                        <div id="loginMessage" class="message"></div>
+                        <div class="form-group">
+                            <input type="text" id="productImageURLs" placeholder="Image URLs (comma-separated)">
+                        </div>
+                        <button type="submit" class="festive-button">Add Product</button>
                     </form>
+                    <div id="addProductMessage" class="message"></div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Admin Panel Section -->
-            <div id="adminPanel" class="section animate__animated animate__fadeIn">
-                <h2 class="section-title">Admin Panel</h2>
-                <div class="category-cards">
-                    <!-- Electronics Card -->
-                    <div class="category-card" onclick="showCategory('electronics')">
-                        <h3>Electronics</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-primary" onclick="openModal('electronicsAddUpdate')">Add</button>
-                            <button class="btn btn-primary" onclick="openModal('electronicsFetch')">Update</button>
-                            <button class="btn btn-primary" onclick="openModal('electronicsDelete')">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Fashion Card -->
-                    <div class="category-card" onclick="showCategory('fashion')">
-                        <h3>Fashion</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-primary" onclick="openModal('fashionAddUpdate')">Add</button>
-                            <button class="btn btn-primary" onclick="openModal('fashionFetch')">Update</button>
-                            <button class="btn btn-primary" onclick="openModal('fashionDelete')">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Furniture Card -->
-                    <div class="category-card" onclick="showCategory('furniture')">
-                        <h3>Furniture</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-primary" onclick="openModal('furnitureAddUpdate')">Add</button>
-                            <button class="btn btn-primary" onclick="openModal('furnitureFetch')">Update</button>
-                            <button class="btn btn-primary" onclick="openModal('furnitureDelete')">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Cosmetics Card -->
-                    <div class="category-card" onclick="showCategory('cosmetics')">
-                        <h3>Cosmetics</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-primary" onclick="openModal('cosmeticsAddUpdate')">Add</button>
-                            <button class="btn btn-primary" onclick="openModal('cosmeticsFetch')">Update</button>
-                            <button class="btn btn-primary" onclick="openModal('cosmeticsDelete')">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Food and Health Card -->
-                    <div class="category-card" onclick="showCategory('foodAndHealth')">
-                        <h3>Food and Health</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-primary" onclick="openModal('foodAndHealthAddUpdate')">Add</button>
-                            <button class="btn btn-primary" onclick="openModal('foodAndHealthFetch')">Update</button>
-                            <button class="btn btn-primary" onclick="openModal('foodAndHealthDelete')">Delete</button>
-                        </div>
-                    </div>
+            <!-- Product List -->
+            <section class="admin-section festive-section">
+                <div class="loader"></div>
+                <h2 class="section-title festive-section-title">Manage Products</h2>
+                <div class="filters">
+                    <select id="productCategoryFilter" onchange="loadProducts()">
+                        <option value="all">All Categories</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="veg">Vegetables</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="hebayur">HerbalAndAyurvedic</option>
+                        <option value="oils">Essential Oils</option>
+                    </select>
+                    <input type="text" id="productSearch" placeholder="Search products..." onkeyup="loadProducts()">
                 </div>
+                <div id="productList" class="product-grid"></div>
+                <div id="productPagination" class="pagination"></div>
+            </section>
 
-                <!-- Modals for Forms -->
-                <!-- Electronics Add/Update Modal -->
-                <div id="electronicsAddUpdate" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('electronicsAddUpdate')">×</span>
-                        <h2 class="section-title">Add/Update Electronics</h2>
-                        <div class="form-container">
-                            <form id="electronicsForm">
-                                <div class="form-group">
-                                    <label for="electronicsProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="electronicsProductId" placeholder="Product ID (e.g., P001)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsName" class="form-label">Product Name</label>
-                                    <input type="text" id="electronicsName" placeholder="Product Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsDescription" class="form-label">Description</label>
-                                    <input type="text" id="electronicsDescription" placeholder="Description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsBrand" class="form-label">Brand</label>
-                                    <input type="text" id="electronicsBrand" placeholder="Brand" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsImageURLs" class="form-label">Image URLs (comma-separated)</label>
-                                    <input type="text" id="electronicsImageURLs" placeholder="Image URLs (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsDisplay" class="form-label">Display</label>
-                                    <input type="text" id="electronicsDisplay" placeholder="Display">
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsProcessor" class="form-label">Processor</label>
-                                    <input type="text" id="electronicsProcessor" placeholder="Processor">
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsBattery" class="form-label">Battery</label>
-                                    <input type="text" id="electronicsBattery" placeholder="Battery">
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsAvailability" class="form-label">Availability</label>
-                                    <input type="number" id="electronicsAvailability" placeholder="Availability" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="electronicsIsActive" class="form-label">Is Active</label>
-                                    <input type="checkbox" id="electronicsIsActive" checked>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Add/Update Product</button>
-                                </div>
-                                <div id="electronicsMessage" class="message"></div>
-                            </form>
+            <!-- Order Management -->
+            <section class="admin-section festive-section">
+                <div class="loader"></div>
+                <h2 class="section-title festive-section-title">Manage Orders</h2>
+                <div class="filters">
+                    <input type="text" id="orderSearch" placeholder="Search orders..." onkeyup="loadOrders()">
+                </div>
+                <div id="orderList" class="order-grid"></div>
+                <div id="orderPagination" class="pagination"></div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="admin-section festive-section">
+                <div class="loader"></div>
+                <h2 class="section-title festive-section-title">Analytics</h2>
+                <div id="analytics" class="analytics-container">
+                    <!-- Sales Charts -->
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Sales Overview</h3>
+                        <canvas id="salesBarChart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="analytics-row">
+                        <div class="analytics-card half festive-card">
+                            <h3 class="card-title festive-card-title">Category Distribution</h3>
+                            <canvas id="categoryPieChart" width="400" height="300"></canvas>
+                        </div>
+                        <div class="analytics-card half festive-card">
+                            <h3 class="card-title festive-card-title">Year Comparison</h3>
+                            <canvas id="comparisonChart" width="400" height="300"></canvas>
                         </div>
                     </div>
-                </div>
-
-                <!-- Electronics Fetch Modal -->
-                <div id="electronicsFetch" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('electronicsFetch')">×</span>
-                        <h2 class="section-title">Fetch Electronics for Update</h2>
-                        <div class="form-container">
-                            <form id="electronicsFetchForm">
-                                <div class="form-group">
-                                    <label for="electronicsFetchProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="electronicsFetchProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Fetch Product</button>
-                                </div>
-                            </form>
+                    
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Cost Estimation</h3>
+                        <button class="report-button festive-button" onclick="downloadCostEstimationReport()">Download Cost Estimation Report</button>
+                    </div>
+                    
+                    <!-- Top Products -->
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Top Selling Products</h3>
+                        <div id="topProducts" class="analytics-table-container"></div>
+                    </div>
+                    
+                    <!-- Bottom Products -->
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Poor Performing Products</h3>
+                        <div id="bottomProducts" class="analytics-table-container"></div>
+                    </div>
+                    
+                    <!-- Inventory Report -->
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Inventory Report</h3>
+                        <div id="inventoryReport" class="analytics-table-container">
+                            <table id="inventoryTable" class="analytics-table festive-table">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Stock</th>
+                                        <th>Price (USD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div id="inventoryPagination" class="pagination"></div>
+                            <button class="report-button festive-button" onclick="downloadInventoryReport()">Download Inventory Report</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Report -->
+                    <div class="analytics-card festive-card">
+                        <h3 class="card-title festive-card-title">Customer Report</h3>
+                        <div id="customerReport" class="analytics-table-container">
+                            <table id="customerTable" class="analytics-table festive-table">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Total Orders</th>
+                                        <th>Total Spent (USD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div id="customerPagination" class="pagination"></div>
+                            <button class="report-button festive-button" onclick="downloadCustomerReport()">Download Customer Report</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Electronics Delete Modal -->
-                <div id="electronicsDelete" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('electronicsDelete')">×</span>
-                        <h2 class="section-title">Delete Electronics</h2>
-                        <div class="form-container">
-                            <form id="electronicsDeleteForm">
-                                <div class="form-group">
-                                    <label for="electronicsDeleteProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="electronicsDeleteProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fashion Add/Update Modal -->
-                <div id="fashionAddUpdate" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('fashionAddUpdate')">×</span>
-                        <h2 class="section-title">Add/Update Fashion</h2>
-                        <div class="form-container">
-                            <form id="fashionForm">
-                                <div class="form-group">
-                                    <label for="fashionProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="fashionProductId" placeholder="Product ID (e.g., P002)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionName" class="form-label">Product Name</label>
-                                    <input type="text" id="fashionName" placeholder="Product Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionDescription" class="form-label">Description</label>
-                                    <input type="text" id="fashionDescription" placeholder="Description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionBrand" class="form-label">Brand</label>
-                                    <input type="text" id="fashionBrand" placeholder="Brand" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionImageURLs" class="form-label">Image URLs (comma-separated)</label>
-                                    <input type="text" id="fashionImageURLs" placeholder="Image URLs (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionSize" class="form-label">Size</label>
-                                    <input type="text" id="fashionSize" placeholder="Size (e.g., S, M, L)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionColor" class="form-label">Color</label>
-                                    <input type="text" id="fashionColor" placeholder="Color">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionMaterial" class="form-label">Material</label>
-                                    <input type="text" id="fashionMaterial" placeholder="Material">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionPrice" class="form-label">Price</label>
-                                    <input type="number" id="fashionPrice" placeholder="Price" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionDiscountPrice" class="form-label">Discount Price</label>
-                                    <input type="number" id="fashionDiscountPrice" placeholder="Discount Price">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionWarehouseId" class="form-label">Warehouse ID</label>
-                                    <input type="text" id="fashionWarehouseId" placeholder="Warehouse ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionStock" class="form-label">Stock</label>
-                                    <input type="number" id="fashionStock" placeholder="Stock" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionSoldBy" class="form-label">Sold By</label>
-                                    <input type="text" id="fashionSoldBy" placeholder="Sold By" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionAvailability" class="form-label">Availability</label>
-                                    <input type="number" id="fashionAvailability" placeholder="Availability" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fashionIsActive" class="form-label">Is Active</label>
-                                    <select id="fashionIsActive" required>
-                                        <option value="true">Active</option>
-                                        <option value="false">Not Active</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Add/Update Product</button>
-                                </div>
-                                <div id="fashionMessage" class="message"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fashion Fetch Modal -->
-                <div id="fashionFetch" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('fashionFetch')">×</span>
-                        <h2 class="section-title">Fetch Fashion for Update</h2>
-                        <div class="form-container">
-                            <form id="fashionFetchForm">
-                                <div class="form-group">
-                                    <label for="fashionFetchProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="fashionFetchProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Fetch Product</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fashion Delete Modal -->
-                <div id="fashionDelete" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('fashionDelete')">×</span>
-                        <h2 class="section-title">Delete Fashion</h2>
-                        <div class="form-container">
-                            <form id="fashionDeleteForm">
-                                <div class="form-group">
-                                    <label for="fashionDeleteProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="fashionDeleteProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Furniture Add/Update Modal -->
-                <div id="furnitureAddUpdate" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('furnitureAddUpdate')">×</span>
-                        <h2 class="section-title">Add/Update Furniture</h2>
-                        <div class="form-container">
-                            <form id="furnitureForm">
-                                <div class="form-group">
-                                    <label for="furnitureProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="furnitureProductId" placeholder="Product ID (e.g., P003)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureName" class="form-label">Product Name</label>
-                                    <input type="text" id="furnitureName" placeholder="Product Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureDescription" class="form-label">Description</label>
-                                    <input type="text" id="furnitureDescription" placeholder="Description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureBrand" class="form-label">Brand</label>
-                                    <input type="text" id="furnitureBrand" placeholder="Brand" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureImageURLs" class="form-label">Image URLs (comma-separated)</label>
-                                    <input type="text" id="furnitureImageURLs" placeholder="Image URLs (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureDimensions" class="form-label">Dimensions</label>
-                                    <input type="text" id="furnitureDimensions" placeholder="Dimensions (e.g., 20x30x40)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureMaterial" class="form-label">Material</label>
-                                    <input type="text" id="furnitureMaterial" placeholder="Material">
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureWeight" class="form-label">Weight (kg)</label>
-                                    <input type="number" id="furnitureWeight" placeholder="Weight (kg)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="furniturePrice" class="form-label">Price</label>
-                                    <input type="number" id="furniturePrice" placeholder="Price" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureDiscountPrice" class="form-label">Discount Price</label>
-                                    <input type="number" id="furnitureDiscountPrice" placeholder="Discount Price">
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureWarehouseId" class="form-label">Warehouse ID</label>
-                                    <input type="text" id="furnitureWarehouseId" placeholder="Warehouse ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureStock" class="form-label">Stock</label>
-                                    <input type="number" id="furnitureStock" placeholder="Stock" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureSoldBy" class="form-label">Sold By</label>
-                                    <input type="text" id="furnitureSoldBy" placeholder="Sold By" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureAvailability" class="form-label">Availability</label>
-                                    <input type="number" id="furnitureAvailability" placeholder="Availability" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="furnitureIsActive" class="form-label">Is Active</label>
-                                    <select id="furnitureIsActive" required>
-                                        <option value="true">Active</option>
-                                        <option value="false">Not Active</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Add/Update Product</button>
-                                </div>
-                                <div id="furnitureMessage" class="message"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Furniture Fetch Modal -->
-                <div id="furnitureFetch" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('furnitureFetch')">×</span>
-                        <h2 class="section-title">Fetch Furniture for Update</h2>
-                        <div class="form-container">
-                            <form id="furnitureFetchForm">
-                                <div class="form-group">
-                                    <label for="furnitureFetchProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="furnitureFetchProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Fetch Product</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Furniture Delete Modal -->
-                <div id="furnitureDelete" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('furnitureDelete')">×</span>
-                        <h2 class="section-title">Delete Furniture</h2>
-                        <div class="form-container">
-                            <form id="furnitureDeleteForm">
-                                <div class="form-group">
-                                    <label for="furnitureDeleteProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="furnitureDeleteProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cosmetics Add/Update Modal -->
-                <div id="cosmeticsAddUpdate" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('cosmeticsAddUpdate')">×</span>
-                        <h2 class="section-title">Add/Update Cosmetics</h2>
-                        <div class="form-container">
-                            <form id="cosmeticsForm">
-                                <div class="form-group">
-                                    <label for="cosmeticsProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="cosmeticsProductId" placeholder="Product ID (e.g., P004)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsName" class="form-label">Product Name</label>
-                                    <input type="text" id="cosmeticsName" placeholder="Product Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsDescription" class="form-label">Description</label>
-                                    <input type="text" id="cosmeticsDescription" placeholder="Description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsBrand" class="form-label">Brand</label>
-                                    <input type="text" id="cosmeticsBrand" placeholder="Brand" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsImageURLs" class="form-label">Image URLs (comma-separated)</label>
-                                    <input type="text" id="cosmeticsImageURLs" placeholder="Image URLs (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsType" class="form-label">Type</label>
-                                    <input type="text" id="cosmeticsType" placeholder="Type (e.g., Lipstick, Cream)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsIngredients" class="form-label">Ingredients (comma-separated)</label>
-                                    <input type="text" id="cosmeticsIngredients" placeholder="Ingredients (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsExpirationDate" class="form-label">Expiration Date</label>
-                                    <input type="date" id="cosmeticsExpirationDate" placeholder="Expiration Date">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsPrice" class="form-label">Price</label>
-                                    <input type="number" id="cosmeticsPrice" placeholder="Price" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsDiscountPrice" class="form-label">Discount Price</label>
-                                    <input type="number" id="cosmeticsDiscountPrice" placeholder="Discount Price">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsWarehouseId" class="form-label">Warehouse ID</label>
-                                    <input type="text" id="cosmeticsWarehouseId" placeholder="Warehouse ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsStock" class="form-label">Stock</label>
-                                    <input type="number" id="cosmeticsStock" placeholder="Stock" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsSoldBy" class="form-label">Sold By</label>
-                                    <input type="text" id="cosmeticsSoldBy" placeholder="Sold By" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsAvailability" class="form-label">Availability</label>
-                                    <input type="number" id="cosmeticsAvailability" placeholder="Availability" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cosmeticsIsActive" class="form-label">Is Active</label>
-                                    <select id="cosmeticsIsActive" required>
-                                        <option value="true">Active</option>
-                                        <option value="false">Not Active</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Add/Update Product</button>
-                                </div>
-                                <div id="cosmeticsMessage" class="message"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cosmetics Fetch Modal -->
-                <div id="cosmeticsFetch" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('cosmeticsFetch')">×</span>
-                        <h2 class="section-title">Fetch Cosmetics for Update</h2>
-                        <div class="form-container">
-                            <form id="cosmeticsFetchForm">
-                                <div class="form-group">
-                                    <label for="cosmeticsFetchProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="cosmeticsFetchProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Fetch Product</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cosmetics Delete Modal -->
-                <div id="cosmeticsDelete" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('cosmeticsDelete')">×</span>
-                        <h2 class="section-title">Delete Cosmetics</h2>
-                        <div class="form-container">
-                            <form id="cosmeticsDeleteForm">
-                                <div class="form-group">
-                                    <label for="cosmeticsDeleteProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="cosmeticsDeleteProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food and Health Add/Update Modal -->
-                <div id="foodAndHealthAddUpdate" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('foodAndHealthAddUpdate')">×</span>
-                        <h2 class="section-title">Add/Update Food and Health</h2>
-                        <div class="form-container">
-                            <form id="foodAndHealthForm">
-                                <div class="form-group">
-                                    <label for="foodAndHealthProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="foodAndHealthProductId" placeholder="Product ID (e.g., P005)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthName" class="form-label">Product Name</label>
-                                    <input type="text" id="foodAndHealthName" placeholder="Product Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthDescription" class="form-label">Description</label>
-                                    <input type="text" id="foodAndHealthDescription" placeholder="Description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthBrand" class="form-label">Brand</label>
-                                    <input type="text" id="foodAndHealthBrand" placeholder="Brand" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthImageURLs" class="form-label">Image URLs (comma-separated)</label>
-                                    <input type="text" id="foodAndHealthImageURLs" placeholder="Image URLs (comma-separated)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthType" class="form-label">Type</label>
-                                    <input type="text" id="foodAndHealthType" placeholder="Type (e.g., Supplement, Snack)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthNutritionalInfo" class="form-label">Nutritional Info</label>
-                                    <input type="text" id="foodAndHealthNutritionalInfo" placeholder="Nutritional Info">
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthShelfLife" class="form-label">Shelf Life</label>
-                                    <input type="text" id="foodAndHealthShelfLife" placeholder="Shelf Life (e.g., 12 months)">
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthPrice" class="form-label">Price</label>
-                                    <input type="number" id="foodAndHealthPrice" placeholder="Price" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthDiscountPrice" class="form-label">Discount Price</label>
-                                    <input type="number" id="foodAndHealthDiscountPrice" placeholder="Discount Price">
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthWarehouseId" class="form-label">Warehouse ID</label>
-                                    <input type="text" id="foodAndHealthWarehouseId" placeholder="Warehouse ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthStock" class="form-label">Stock</label>
-                                    <input type="number" id="foodAndHealthStock" placeholder="Stock" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthSoldBy" class="form-label">Sold By</label>
-                                    <input type="text" id="foodAndHealthSoldBy" placeholder="Sold By" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthAvailability" class="form-label">Availability</label>
-                                    <input type="number" id="foodAndHealthAvailability" placeholder="Availability" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="foodAndHealthIsActive" class="form-label">Is Active</label>
-                                    <select id="foodAndHealthIsActive" required>
-                                        <option value="true">Active</option>
-                                        <option value="false">Not Active</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Add/Update Product</button>
-                                </div>
-                                <div id="foodAndHealthMessage" class="message"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food and Health Fetch Modal -->
-                <div id="foodAndHealthFetch" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('foodAndHealthFetch')">×</span>
-                        <h2 class="section-title">Fetch Food and Health for Update</h2>
-                        <div class="form-container">
-                            <form id="foodAndHealthFetchForm">
-                                <div class="form-group">
-                                    <label for="foodAndHealthFetchProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="foodAndHealthFetchProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Fetch Product</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food and Health Delete Modal -->
-                <div id="foodAndHealthDelete" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('foodAndHealthDelete')">×</span>
-                        <h2 class="section-title">Delete Food and Health</h2>
-                        <div class="form-container">
-                            <form id="foodAndHealthDeleteForm">
-                                <div class="form-group">
-                                    <label for="foodAndHealthDeleteProductId" class="form-label">Product ID</label>
-                                    <input type="text" id="foodAndHealthDeleteProductId" placeholder="Product ID" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-<!-- Pie Chart for Sales by Category -->
-<div class="analytics-section">
-    <h2 class="section-title">Sales by Category (Pie Chart)</h2>
-    <div class="chart-container">
-        <canvas id="salesByCategoryPieChart" width="400" height="400"></canvas>
-    </div>
-</div>
-                <!-- Analytics Section -->
-                <h2 class="section-title">Analytics</h2>
-                <div class="form-group">
-                    <button onclick="getAnalytics()" class="btn btn-primary btn-block">Download Analytics</button>
-                </div>
-                <div class="analytics-container">
-                    <div id="cashReports" class="analytics-card"></div>
-                    <div id="customerPurchases" class="analytics-card"></div>
-                    <div id="paymentReports" class="analytics-card"></div>
-                    <div id="topProducts" class="analytics-card"></div>
-                    <div id="bottomProducts" class="analytics-card"></div>
-                    <div id="inventoryReports" class="analytics-card"></div>
-                </div>
-            </div>
+            </section>
         </div>
     </main>
 
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top festive-button" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3 class="footer-title">Follow us and enjoy buying your favourite items</h3>
+                <div class="social-icons">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-pinterest"></i>
+                </div>
+            </div>
+            <div class="footer-section">
+                <div class="footer-links">
+                    <a href="#">Shipping & Returns</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">FAQ</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 by HEALTHIFY.
+        </div>
+    </footer>
+
     <script src="js/admin.js"></script>
+    <script>
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Hide loaders after content loads (placeholder logic)
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.loader').forEach(loader => {
+                loader.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>
